@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 {
     int sd, rc, numero_sequencia, n, cliLen, opt, tamanho, i=0, aux;
     struct sockaddr_in cliAddr, servAddr;
-    char msg[MAX_MSG], caminho_arquivo[20], *msg_pacote, dados[MAX_MSG_PACOTE], arq_diretorio[MAX_MSG] = {}, parte_msg[MAX_MSG_PACOTE];
+    char msg[MAX_MSG], caminho_arquivo[50], *msg_pacote, dados[MAX_MSG_PACOTE], arq_diretorio[MAX_MSG] = {}, parte_msg[MAX_MSG_PACOTE];
     DIR *dir;
     struct dirent *lsdir;
     fd_set select_fds; /* fd's usado por select */
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
             	caracteres e enviado para o cliente.
             */
 
-            dir = opendir("/home/maysu/Redes");
+            dir = opendir("/home/maysu/Redes/servidor");
 
             strcpy(arq_diretorio,"\n \t Arquivos disponiveis no servidor: \n * ");
 
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
                     continue;
                 }
 
-                strcpy(caminho_arquivo, "/home/maysu/Redes");
+                strcpy(caminho_arquivo, "/home/maysu/Redes/servidor/");
                 strcat(caminho_arquivo, msg);
 
                 arq = fopen(caminho_arquivo,"rb");
