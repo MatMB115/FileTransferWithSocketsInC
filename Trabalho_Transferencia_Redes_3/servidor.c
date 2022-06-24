@@ -10,11 +10,11 @@
 #include <dirent.h>
 
 // Porta uDP
-#define LoCAL_SeRVeR_PoRT 1500
+#define LOCAL_SERVER_PORT 1500
 // Tamanho maximo da mensagem
 #define MAX_MSG 2000
 // Tamanho maximo da parte da mensagem, que este pacote contem
-#define MAX_MSG_PACoTe 50
+#define MAX_MSG_PACOTE 50
 
 //estrutura do pacote a se enviar
 typedef struct pacote
@@ -22,7 +22,7 @@ typedef struct pacote
     int numero_pact;
     unsigned char check_sum;
     int tamanho;
-    char part_msg[MAX_MSG_PACoTe];
+    char part_msg[MAX_MSG_PACOTE];
 } pacote ;
 
 //estrutura da resposta (ACK) a se receber
@@ -67,17 +67,17 @@ int main(int argc, char *argv[])
 {
     int sd, rc, numero_sequencia, n, cliLen, opt, tamanho, i=0, aux;
     struct sockaddr_in cliAddr, servAddr;
-    char msg[MAX_MSG], caminho_arquivo[20], *msg_pacote, dados[MAX_MSG_PACoTe], arq_diretorio[MAX_MSG] = {}, parte_msg[MAX_MSG_PACoTe];
-    DiR *dir;
+    char msg[MAX_MSG], caminho_arquivo[20], *msg_pacote, dados[MAX_MSG_PACOTE], arq_diretorio[MAX_MSG] = {}, parte_msg[MAX_MSG_PACOTE];
+    DIR *dir;
     struct dirent *lsdir;
     fd_set select_fds; /* fd's usado por select */
 	struct timeval timeout; /* Valor de tempo para timeout */
-    FiLe *arq;
+    FILE *arq;
     pacote p;
     resposta rsp;
 
     /* Criacao do socket */
-    sd=socket(AF_iNeT, SoCK_DGRAM, 0);
+    sd=socket(AF_INET, SOCK_DGRAM, 0);
     if(sd<0)
     {
         printf("%s: cannot open socket \n",argv[0]);
@@ -85,19 +85,19 @@ int main(int argc, char *argv[])
     }
 
     /* bind local server port */
-    servAddr.sin_family = AF_iNeT;
-    servAddr.sin_addr.s_addr = htonl(iNADDR_ANY);
-    servAddr.sin_port = htons( LoCAL_SeRVeR_PoRT );
+    servAddr.sin_family = AF_INET;
+    servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servAddr.sin_port = htons( LOCAL_SERVER_PORT );
     rc = bind (sd, (struct sockaddr *) &servAddr,sizeof(servAddr));
     if(rc<0)
     {
         printf("%s: cannot bind port number %d \n",
-               argv[0], LoCAL_SeRVeR_PoRT);
+               argv[0], LOCAL_SERVER_PORT);
         exit(1);
     }
 
     printf("%s: waiting for data on port uDP %u\n",
-           argv[0],LoCAL_SeRVeR_PoRT);
+           argv[0],LOCAL_SERVER_PORT);
 
 
     while(1)
@@ -122,11 +122,11 @@ int main(int argc, char *argv[])
             	caracteres e enviado para o cliente.
             */
 
-            dir = opendir("/home/gabriel/Documentos/TrabalhoTeste");
+            dir = opendir("/home/maysu/Redes");
 
             strcpy(arq_diretorio,"\n \t Arquivos disponiveis no servidor: \n * ");
 
-            while ( ( lsdir = readdir(dir) ) != NuLL )
+            while ( ( lsdir = readdir(dir) ) != NULL )
             {
 
                 strcpy(msg, lsdir->d_name);
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
                     continue;
                 }
 
-                strcpy(caminho_arquivo, "/home/gabriel/Documentos/TrabalhoTeste/");
+                strcpy(caminho_arquivo, "/home/maysu/Redes");
                 strcat(caminho_arquivo, msg);
 
                 arq = fopen(caminho_arquivo,"rb");
@@ -181,12 +181,12 @@ int main(int argc, char *argv[])
 
                 /*
                 	Apos a abertura do arquivo, com a funcao fread podemos ler o arquivo binario, em partes
-                	cujo tamanho maximo e definido pela constante MAX_MSG_PACoTe.
+                	cujo tamanho maximo e definido pela constante MAX_MSG_PACOTE.
                 */
 
-                tamanho = fread(&dados,sizeof(char),MAX_MSG_PACoTe,arq);
+                tamanho = fread(&dados,sizeof(char),MAX_MSG_PACOTE,arq);
                 if (tamanho == 0)
-                    strcpy(dados,"TRANFeReNCiA FiNALiZADA");
+                    strcpy(dados,"Transferencia Realizada");
                 else
                 {
                     msg_pacote=(char*)calloc(tamanho,sizeof(char));
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
                 {
                     msg_pacote[i]=dados[i];
                 }
-                while(strcmp(msg_pacote,"TRANFeReNCiA FiNALiZADA"))
+                while(strcmp(msg_pacote,"Transferencia Realizada"))
                 {
 
                     /*
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
 
                     p = criaPacote(msg_pacote,numero_sequencia, &tamanho);
 
-                    eNVio:
+                    Envio:
                     sendto(sd,&p, sizeof(pacote)+1, 0,(struct sockaddr *) &cliAddr,sizeof(cliAddr));
                     memset(&rsp,0x0,sizeof(rsp));
                     aux = sizeof(cliAddr);
@@ -212,8 +212,8 @@ int main(int argc, char *argv[])
 		            /* -----------------------------------------
 		             Ajustando a descricao para o select()
 		             ----------------------------------------- */
-		            FD_ZeRo(&select_fds); /* Limpando o fd's */
-		            FD_SeT(sd, &select_fds); /* Ajustando o bit que corresponde ao soquete */
+		            FD_ZERO(&select_fds); /* Limpando o fd's */
+		            FD_SET(sd, &select_fds); /* Ajustando o bit que corresponde ao soquete */
 
 		            /* -----------------------------------------
 		             Ajustando o valor de expiracao
@@ -227,19 +227,19 @@ int main(int argc, char *argv[])
 				         * o tempo maximo permitido e de 5 segundos;
 				    */
 
-			        if (select(32, &select_fds, NuLL, NuLL, &timeout) == 0){
+			        if (select(32, &select_fds, NULL, NULL, &timeout) == 0){
 			            printf("\nAviso: o temporizador estourou! Reenviando Pacote...\n");
-			            goto eNVio;
+			            goto Envio;
 			        } else {
 			            printf("--- Resposta do cliente recebida! \n");
 			        }
 
                     recvfrom(sd,&rsp,sizeof(resposta), 0,(struct sockaddr *) &cliAddr, &aux);
                     printf("-- Pacote numero %d enviado ao cliente!  \n",numero_sequencia);
-                    tamanho=fread(&parte_msg,sizeof(char),MAX_MSG_PACoTe,arq);
+                    tamanho=fread(&parte_msg,sizeof(char),MAX_MSG_PACOTE,arq);
                     if (tamanho==0)
                     {
-                        strcpy(msg_pacote,"TRANFeReNCiA FiNALiZADA");
+                        strcpy(msg_pacote,"Transferencia Realizada");
                     }
                     else
                     {
@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
                 	o cliente que a transferencia foi finalizada e encerramos a conexao
                 */
 
-                strcpy(p.part_msg,"TRANFeReNCiA FiNALiZADA");
+                strcpy(p.part_msg,"Transferencia Realizada");
                 rc = sendto(sd, &p, sizeof(pacote)+1, 0,(struct sockaddr *) &cliAddr,sizeof(cliAddr));
                 printf("\t\n =======================================================================\n");
                 printf("\n \t Arquivo enviado! \n");

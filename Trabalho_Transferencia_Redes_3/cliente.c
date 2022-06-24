@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     pacote p;
     resposta rsp;
     unsigned char valor_checksum;
-    FiLe *arquivo;
+    FILE *arquivo;
     char msg[MaX_MSG];
     int sd, rc, i, n, servLen, j=0, escolha = 0, opt;
     struct sockaddr_in cliaddr, remoteServaddr;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     }
 
     h = gethostbyname(argv[1]);
-    if(h==NuLL)
+    if(h==NULL)
     {
         printf("%s: unknown host '%s' \n", argv[0], argv[1]);
         exit(1);
@@ -79,15 +79,15 @@ int main(int argc, char *argv[])
     remoteServaddr.sin_port = htons(ReMoTe_SeRVeR_PoRT);
 
 
-    sd = socket(aF_iNeT,SoCK_DGRaM,0);
+    sd = socket(AF_INET,SOCK_DGRAM,0);
     if(sd<0)
     {
         printf("%s: cannot open socket \n",argv[0]);
         exit(1);
     }
 
-    cliaddr.sin_family = aF_iNeT;
-    cliaddr.sin_addr.s_addr = htonl(iNaDDR_aNY);
+    cliaddr.sin_family = AF_INET;
+    cliaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     cliaddr.sin_port = htons(0);
 
     rc = bind(sd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
     printf("insira o nome do arquivo ou pressione Ctrl+C para encerrar: ");
     scanf(" %[^\n]s ", msg);
-    setbuf(stdin,NuLL);
+    setbuf(stdin,NULL);
 
     arquivo = fopen(msg,"wt");
     if(!arquivo)
