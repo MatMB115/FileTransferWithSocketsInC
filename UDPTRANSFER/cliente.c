@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   int bind_cliente, i=2;
   struct sockaddr_in cliente, server, cliente_servidor;
 
-  char ip_de_envio[15]="", porta_de_envio[5]="", nome_arquivo[30]="", extensao[5]="";
+  char ip_de_envio[15]="", porta_de_envio[5]="", nome_arquivo[30]="", extensao[5]="", listaArq[30]="";
   int porta_de_envio_int;
 
   /* criação do socket do cliente */
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  if(argc!=3) {
+  if(argc!=2) {
     //./nomeprograma ip_server nome_arquivo
     printf("Parametros: %s <ip_server> <arquivo.extensao>\n", argv[0]);
     exit(1);
@@ -63,7 +63,29 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  strcpy(nome_arquivo, argv[2]);
+  int tam_cliente = sizeof(cliente);
+  tam_server = sizeof(server);
+
+  while((bind_cliente = sendto(cliente_socket, mensagem, sizeof(mensagem)+1, 0, 
+		(struct sockaddr *) &server, sizeof(server)))<0){
+            temporizador_de_dados(TEMPO_PADRAO);
+  }
+
+  //recebe resposta do servidor
+  while((recebido = recvfrom(cliente_socket, listaArq, sizeof(listaArq), 0, (struct sockaddr *) &cliente, &tam_cliente))<0){
+      temporizador_de_dados(TEMPO_PADRAO);
+  }
+
+  for(i = 0; i < strlen(listaArq); i++){
+    if(strcmp(listaArq, " ") == 0){
+      printf("\n");
+    }
+    printf("%c",listaArq[i]);
+  }
+
+  printf("\nDigite qual arquivo deseja baixar:");
+  scanf(" %s", &nome_arquivo);
+
   printf("NOME ARQUIVO: %s\n", nome_arquivo);
   int passou=0, j=0;
 
@@ -81,17 +103,13 @@ int main(int argc, char *argv[]) {
 
   /* requisita download de arquivos */
   for(i=2;i<argc;i++) {
+    sprintf(mensagem, "%s %s", nome_arquivo, IP_LOCAL);
+    printf("Para Server: %s\n", mensagem);
     //envia requisição ao servidor
-    sprintf(mensagem, "%s %s", argv[i], IP_LOCAL);
     while((bind_cliente = sendto(cliente_socket, mensagem, sizeof(mensagem)+1, 0, 
 		(struct sockaddr *) &server, sizeof(server)))<0){
             temporizador_de_dados(TEMPO_PADRAO);
     }
-
-    printf("Para Server: %s\n", mensagem);
-
-    int tam_cliente = sizeof(cliente);
-    tam_server = sizeof(server);
 
     //recebe resposta do servidor
     while((recebido = recvfrom(cliente_socket, mensagem, MAX_MSG, 0, (struct sockaddr *) &cliente, &tam_cliente))<0){
