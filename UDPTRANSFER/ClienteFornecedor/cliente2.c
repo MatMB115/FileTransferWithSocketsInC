@@ -8,17 +8,17 @@
 #include <unistd.h> 
 #include <string.h>
 #include <stdbool.h>
-#include <time.h>
+#include <time.h> //Temporizar o envio
 
-#define SERVER_PORT 1500            //porta do servidor(padronizada)
+#define SERVER_PORT 1500            //porta padrão do servidor
 #define IP_SERVER "192.168.1.10"    //ipv4 do servidor(PODE SER ALTERADO)
-#define MAX_MSG 1024                //tamanho max do buffer
+#define TAM_MAX_MSG 1024                //tamanho max do buffer
 #define TEMPO_PADRAO 1              //tempo padrão do temporizador
 #define LIMITE_DADOS 50             //índice que possui o início dos dados
 
 //variáveis globais
 int socket_cliente2, flag=0;
-char mensagem[MAX_MSG]="";
+char mensagem[TAM_MAX_MSG]="";
 
 /* protótipos das funções */
 void inicializar_sockaddr_in(struct sockaddr_in *estrutura, int port);
@@ -64,12 +64,12 @@ int main(int argc, char *argv[]) {
 
   //espera requisições
   while(1){
-      memset(mensagem,0x0,MAX_MSG);
+      memset(mensagem,0x0,TAM_MAX_MSG);
       memset(ip_cliente,0x0,15);
       memset(porta_cliente,0x0,5);
       memset(arquivo_cliente,0x0,30);
       //espera receber alguma mensagem do servidor
-      while((recebido = recvfrom(socket_cliente2, mensagem, MAX_MSG, 0, (struct sockaddr *) &server, &tam_server))<0){
+      while((recebido = recvfrom(socket_cliente2, mensagem, TAM_MAX_MSG, 0, (struct sockaddr *) &server, &tam_server))<0){
         temporizador_de_dados(TEMPO_PADRAO);
       }
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
         }
 
       //inicializa o checksum e abre arquivo 
-      char mensagem_envio[MAX_MSG]="", checksum[11]="0000000000";
+      char mensagem_envio[TAM_MAX_MSG]="", checksum[11]="0000000000";
       FILE* arquivo = fopen(arquivo_cliente, "rb");
       int num_pacote=0, termino=0, espaco_cabecalho = 0;
 
@@ -127,13 +127,13 @@ int main(int argc, char *argv[]) {
 
         //se não deu problema no envio, então leia mais dados do arquivo
         if(flag==0){
-            fread(&mensagem_envio[LIMITE_DADOS], 1, MAX_MSG-(LIMITE_DADOS-1), arquivo);
+            fread(&mensagem_envio[LIMITE_DADOS], 1, TAM_MAX_MSG-(LIMITE_DADOS-1), arquivo);
         }
         flag=0;
         
         //gera checksum
         int j=0, i=0;
-        for(i=LIMITE_DADOS;i<MAX_MSG; i++){            
+        for(i=LIMITE_DADOS;i<TAM_MAX_MSG; i++){            
             if(j>=10){
                 j=0;            
             }
@@ -152,26 +152,26 @@ int main(int argc, char *argv[]) {
         }
 
         //reseta mensagem
-        memset(mensagem, 0x0, MAX_MSG);
+        memset(mensagem, 0x0, TAM_MAX_MSG);
 
         int tam_cliente = sizeof(cliente);
 
         //espera receber resposta do cliente
-        while((recebido = recvfrom(socket_cliente2, mensagem, MAX_MSG, 0, (struct sockaddr *) &cliente, &tam_cliente))<0){
+        while((recebido = recvfrom(socket_cliente2, mensagem, TAM_MAX_MSG, 0, (struct sockaddr *) &cliente, &tam_cliente))<0){
             temporizador_de_dados(TEMPO_PADRAO);
         }
 
         //se a resposta for uma confirmação, vai pro próximo pacote
         if(strncmp("ACK",mensagem,3)==0){
             num_pacote++;
-            memset(mensagem_envio,0x0,MAX_MSG);
+            memset(mensagem_envio,0x0,TAM_MAX_MSG);
         }//senão se de erro, ele mantém os dados desse pacote para reenviar
         else if(strncmp("NGC",mensagem, 3)==0){
             //pega num pacote com problema  
-            char numQualquer[MAX_MSG];
+            char numQualquer[TAM_MAX_MSG];
             memcpy(numQualquer, &mensagem[4], sizeof(mensagem)-4);
             num_pacote = atoi(numQualquer); 
-            memset(numQualquer,0x0,MAX_MSG);
+            memset(numQualquer,0x0,TAM_MAX_MSG);
             flag=1; 
         }
 
@@ -180,7 +180,7 @@ int main(int argc, char *argv[]) {
       }
       fclose(arquivo); //fecha arquivo(já enviado)
     printf("%s: FINALIZADO ENVIO DO ARQUIVO\n", argv[0]);
-    memset(mensagem_envio, 0x0, MAX_MSG);
+    memset(mensagem_envio, 0x0, TAM_MAX_MSG);
 
       //envia pacote de término(sem dados)
       sprintf(mensagem_envio, "REQ %d %d", num_pacote, termino+1);

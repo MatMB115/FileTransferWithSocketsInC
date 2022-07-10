@@ -8,15 +8,15 @@
 #include <unistd.h> 
 #include <string.h>
 #include <stdbool.h>
-#include <time.h>
+#include <time.h> //Temporizar o envio
 
-#define SERVER_PORT 1500 //porta do servidor(padronizada)
-#define MAX_MSG 100      //tamanho max do buffer
+#define SERVER_PORT 1500 //porta padrão do servidor
+#define TAM_MAX_MSG 100      //tamanho max do buffer
 #define TEMPO_PADRAO 1   //tempo padrão do temporizador
 
 //variáveis globais
 int socket_server, flag=1, flag2=1;
-char mensagem[MAX_MSG]="";
+char mensagem[TAM_MAX_MSG]="";
 
 /* protótipos das funções */
 void inicializar_sockaddr_in(struct sockaddr_in *estrutura, int port);
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   printf("Servidor Online\n");
 
   struct sockaddr_in cliente2;
-  char nome[30]="", ip[15]="", porta[5]="", dados_enviar[MAX_MSG]="";
+  char nome[30]="", ip[15]="", porta[5]="", dados_enviar[TAM_MAX_MSG]="";
   int recebido = -1;
   char ip_cliente[15]="", ip_cliente2[15]="", porta_cliente2[5]="", arquivo_cliente2[30]="";
   int porta_cliente2_int;
@@ -58,13 +58,13 @@ int main(int argc, char *argv[]) {
   /* recebe requisições e retorna respostas */
   while(1) {
     //zera o buffer da mensagem e reseta flags
-    memset(mensagem,0x0,MAX_MSG);
+    memset(mensagem,0x0,TAM_MAX_MSG);
     flag2=1; flag=1;
 
     int tam_server = sizeof(server);
 
     //espera receber dados
-    while((recebido = recvfrom(socket_server, mensagem, MAX_MSG, 0, (struct sockaddr *) &server, &tam_server))<0){
+    while((recebido = recvfrom(socket_server, mensagem, TAM_MAX_MSG, 0, (struct sockaddr *) &server, &tam_server))<0){
       temporizador_de_dados(TEMPO_PADRAO);
     }
 
