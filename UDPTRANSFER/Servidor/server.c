@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in cliente2;
   char nome[30]="", ip[15]="", porta[5]="", dados_enviar[MAX_MSG]="";
   int recebido = -1;
-  char ip_cliente[15]="", ip_cliente2[15]="", porta_cliente2[5]="", arquivos_cliente2[30]="", arquivo_cliente2[30]="";
+  char ip_cliente[15]="", ip_cliente2[15]="", porta_cliente2[5]="", arquivo_cliente2[30]="";
   int porta_cliente2_int;
 
   /* recebe requisições e retorna respostas */
@@ -62,42 +62,6 @@ int main(int argc, char *argv[]) {
     flag2=1; flag=1;
 
     int tam_server = sizeof(server);
-    //Aguarda um cliente pedir os arquivos
-    while((recebido = recvfrom(socket_server, mensagem, MAX_MSG, 0, (struct sockaddr *) &server, &tam_server))<0){
-      temporizador_de_dados(TEMPO_PADRAO);
-    }
-    FILE *banco;
-
-    int tam_arquivo = retorne_quantidade(mensagem,1);
-    int tam_ip = retorne_quantidade(mensagem,2);
-
-    char nome_mensagem[30]="";
-    memset(nome_mensagem,0x0,30);
-    memcpy(nome_mensagem,mensagem,tam_arquivo);
-    
-    memcpy(ip_cliente, &mensagem[tam_arquivo+1], tam_ip);
-      
-    //configura o host do cliente(quem requisitou o arquivo)  
-    printf("%s: Configurando cliente requisitor\n",argv[0]);
-    inicializar_host(&cliente, ip_cliente, SERVER_PORT);
-
-    printf("IP DO CLIENTE: %s\n",ip_cliente);
-
-    banco = fopen("banco.txt", "r+");
-
-    /* verifica no banco se o arquivo existe */
-    while(!feof(banco)){
-        fscanf(banco, "%s %s %s", nome,ip,porta);
-
-        sprintf(arquivos_cliente2, nome);
-        sprintf(arquivos_cliente2, " ");
-    }
-    fclose(banco);
-    bind_server = sendto(socket_server, arquivos_cliente2, sizeof(arquivos_cliente2)+1, 0, 
-        (struct sockaddr *) &cliente, sizeof(cliente));
-    
-    
-    memset(mensagem,0x0,MAX_MSG);
 
     //espera receber dados
     while((recebido = recvfrom(socket_server, mensagem, MAX_MSG, 0, (struct sockaddr *) &server, &tam_server))<0){
