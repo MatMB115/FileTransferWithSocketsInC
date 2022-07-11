@@ -14,7 +14,7 @@
 #define SERVER_PORT 1500        //porta padrão do servidor
 #define TAM_MAX_MSG 1024            //tamanho max do buffer
 #define T_PADRAO 1          //tempo padrão do temporizador
-#define IP_LOCAL "192.168.1.11" //IPv4 do cliente requisitor
+#define IP_LOCAL "192.168.1.11" //IPv4 do cliente solicitador
 #define LIMITE_DADOS 50         //índice que possui o início dos dados
 
 //Varíaveis Globais

@@ -54,10 +54,10 @@ Já para executar o cliente.c é necessário, em sua respectiva máquina virtual
 
 
 ## Etapas concluídas
-- [x] Cliente requisitor comunica com servidor;
+- [x] Cliente solicitador comunica com servidor;
 - [x] Servidor cria um banco de dados;
 - [x] Servidor consulta banco de dados;
-- [x] Servidor retorna mensagem (dados do struct de quem possui o arquivo) para Cliente requisitor;
+- [x] Servidor retorna mensagem (dados do struct de quem possui o arquivo) para Cliente solicitador;
 - [x] Cliente A solicita arquivo ao Cliente B;
 - [x] Cliente B lê arquivo solicitado, escreve no buffer de memória e envia ao Cliente A;
 - [x] Cliente A recebe os blocos do arquivo solicitado e escreve em um novo arquivo com o mesmo nome;
