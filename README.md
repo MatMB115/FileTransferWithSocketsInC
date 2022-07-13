@@ -4,9 +4,9 @@
 ## Ambiente de testes
   Dois cenários possíveis: 
 
-**Três máquinas virtuais:** com o sistema operacional Linux instalado(nos testes foi utilizado o Linux Mint 19) com repositório atualizado e gcc/gcc multulib instalados(comando: sudo apt-get install gcc gcc-multilib). A rede de cada máquina virtual deve ser configurada para “modo bridge” e cada um deve ter um IPv4 diferente e caso não tenha deve ser configurado manualmente.
+**Três máquinas virtuais:** com o sistema operacional Linux instalado(nos testes foi utilizado o Linux Mint 19) com repositório atualizado e gcc/gcc multilib instalados(comando: sudo apt-get install gcc gcc-multilib). A rede de cada máquina virtual deve ser configurada para “modo bridge” e cada um deve ter um IPv4 diferente e caso não tenha deve ser configurado manualmente.
 
-**Três máquinas físicas:** com o sistema operacional Linux instalado (nos testes foi utilizado o Linux Mint 19) com repositório atualizado e gcc/gcc multulib instalados (comando: sudo apt-get install gcc gcc-multilib).
+**Três máquinas físicas:** com o sistema operacional Linux instalado (nos testes foi utilizado o Linux Mint 19) com repositório atualizado e gcc/gcc multilib instalados (comando: sudo apt-get install gcc gcc-multilib).
 
 ## Arquivos .c
 **server.c:** código utilizado pelo servidor para enviar respostas aos clientes, administra quem vai enviar o arquivo para quem está requisitando e salva informações no banco.txt dos arquivos que os nós possuem.
